@@ -1,0 +1,29 @@
+package parser;
+
+import java.net.*;
+import java.io.*;
+import java.io.Console;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+public class AnyUrlReader1 {
+
+    public static void main(String[] args) throws Exception {
+        
+        Console console = System.console();
+        if (console == null) {
+            System.err.println("No console.");
+            System.exit(1);
+        }
+        
+        URL site = new URL(console.readLine("Enter URL like http://www.expample.com: "));
+        BufferedReader in = new BufferedReader(
+        new InputStreamReader(site.openStream()));
+
+        String inputLine;
+        while ((inputLine = in.readLine()) != null)
+            System.out.println(inputLine);
+        in.close();
+
+    }
+}
