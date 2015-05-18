@@ -1,0 +1,80 @@
+package parser;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+/**
+ * @author Crunchify.com
+ *
+ */
+public class AnyUrlReader2 {
+
+    public static void main(String[] args) {
+
+        String myURL = "http://rgsu.net";
+        String myPattern = "РГСУ";
+        String myText = getTextFromUrl(myURL);
+        //System.out.println(text);
+        // getIndexesPattrnInText лучше сделать возвращающим значение, например в массив
+        getIndexesPattrnInText(myText, myPattern);
+
+    }
+
+    public static String getTextFromUrl(String myURL) {
+        System.out.println("Requeted URL:" + myURL);
+        StringBuilder sb = new StringBuilder();
+        URLConnection urlConn = null;
+        InputStreamReader in = null;
+        try {
+            URL url = new URL(myURL);
+            urlConn = url.openConnection();
+            if (urlConn != null) {
+                urlConn.setReadTimeout(60 * 1000);
+            }
+            if (urlConn != null && urlConn.getInputStream() != null) {
+                in = new InputStreamReader(urlConn.getInputStream(),
+                        Charset.defaultCharset());
+                BufferedReader bufferedReader = new BufferedReader(in);
+                if (bufferedReader != null) {
+                    int cp;
+                    while ((cp = bufferedReader.read()) != -1) {
+                        sb.append((char) cp);
+                    }
+                    bufferedReader.close();
+                }
+            }
+            in.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while calling URL:" + myURL, e);
+        }
+        return sb.toString();
+    }
+
+    public static void getIndexesPattrnInText(String myText, String myPattern) {
+        // Вместо распечатки лучше, конечно, возвращать значения
+        Pattern pattern = Pattern.compile(myPattern);
+        Matcher matcher = pattern.matcher(myText);
+        boolean found = false;
+        while (matcher.find()) {
+            System.out.println(
+                    "I found the text "
+                    + matcher.group()
+                    + " starting at index "
+                    + matcher.start()
+                    + " and ending at index "
+                    + matcher.end() 
+                    + "."
+                    );
+            found = true;
+        }
+        if (!found) {
+            System.out.println("No match found.%n");
+        }
+    }
+
+}
